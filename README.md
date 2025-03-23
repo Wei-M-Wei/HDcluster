@@ -1,11 +1,3 @@
-## To Install
-
-```{r }
-install.packages("devtools")  # If not already installed
-library(devtools)
-install_github("Wei-M-Wei/HDcluster")
-```
-
 ## HDcluster
 
 This is the first version of the R package 'HDcluster'. 
