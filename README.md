@@ -23,8 +23,6 @@ A CRAN release is coming soon.
 - **Replication code**: The repository includes replication code for all simulations and empirical applications.
 - **Suggestions welcome**: Further improvements are planned, and we encourage feedback and suggestions to enhance the package.
     
-    
-```
 
 ## Reference
 [^1]: Beyhum, J., Mugnier, M. Inference after discretizing unobserved heterogeneity. [[arXiv:2502.09740
