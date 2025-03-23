@@ -15,8 +15,6 @@ library(HDcluster)
 A CRAN release is coming soon.
 
 
-## Description
-
 ## Features
 - **Main functionality**: Perform inference after discretizing unobserved heterogeneity in the panel data model, see the paper [^1].
 - **Validation example**: An example 'test.R' is included.
