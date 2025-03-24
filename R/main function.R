@@ -70,7 +70,7 @@
 #' ols_CF <- est_CF[["res"]]
 #' coeff_CF <- ols_CF$coefficients
 #' std_errors_CF <- sqrt(vcovHC(ols_CF, type = "HC0", method = "arellano")) * sqrt((N * T) / est_CF[["df"]])
-
+#' @export
 estimator_dc <- function(formula, data, index, CF = FALSE, init = 30) {
   if (!CF) {
     est_without_CF(formula, data, index, init)
