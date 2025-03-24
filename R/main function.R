@@ -7,7 +7,6 @@
 #' @param init initial iteration number of k-means
 #'
 #' @returns estimated results, cluster number of unit and time group
-#' @importFrom plm, vcovHC
 #' @export
 #'
 #' @examples set.seed(1)
