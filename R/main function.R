@@ -11,7 +11,7 @@
 #'
 #' @examples set.seed(1)
 
-#' Generate data
+#' # Generate data
 
 #' N <- 50
 #' T <- 50

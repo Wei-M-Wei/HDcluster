@@ -25,7 +25,7 @@ Estimator Function with Optional Cross-Fitting
 }
 \examples{
 set.seed(1)
-Generate data
+# Generate data
 N <- 50
 T <- 50
 E <- matrix( rnorm(N*T), N, T)
