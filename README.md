@@ -42,6 +42,9 @@ init <- 300
 # Baseline estimate, allows for cross-fitting
 est <- estimator_dc(formula, data, index, init = init)
 
+# We use the heteroskedasticity autocorrelation consistent standard errors clustered at the level of each unit
+
+
 # We recommond having a look at the 'text.R' in the folder 'R'
 ```
 A CRAN release is coming soon.
