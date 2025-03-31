@@ -43,7 +43,11 @@ init <- 300
 est <- estimator_dc(formula, data, index, init = init)
 
 # We use the heteroskedasticity autocorrelation consistent standard errors clustered at the level of each unit
-
+ols <- est[["res"]]
+G <- est[["G"]]
+C <- est[["C"]]
+coeff <- ols$coefficients
+std_errors <- sqrt(vcovHC(ols, type = "HC0", method = "arellano"))
 
 # We recommond having a look at the 'text.R' in the folder 'R'
 ```
