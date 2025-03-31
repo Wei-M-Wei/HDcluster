@@ -49,7 +49,7 @@ C <- est[["C"]]
 coeff <- ols$coefficients
 std_errors <- sqrt(vcovHC(ols, type = "HC0", method = "arellano")) * sqrt((N * T) / ((N-G)*(T-C)))
 
-# Comparison with Dummy variable described in page 7 of the paper [^1]
+# Comparison with Dummy variable described in page 7 of our paper[^1]
 est_dummy <- estimator_dc_dummy(formula, data, index, init = init)
 ols_dummy <- est_dummy[["res"]]
 coeff <- ols_dummy$coefficients
