@@ -6,7 +6,7 @@
 #' @param CF cross-fitting if true
 #' @param init initial iteration number of k-means
 #'
-#' @returns estimated results, cluster number of unit and time group
+#' @returns estimated results, cluster number of unit, time group, summary table
 #' @export
 #'
 #' @examples set.seed(1)

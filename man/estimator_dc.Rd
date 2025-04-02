@@ -18,7 +18,7 @@ estimator_dc(formula, data, index, CF = FALSE, init = 30)
 \item{init}{initial iteration number of k-means}
 }
 \value{
-estimated results, cluster number of unit and time group
+estimated results, cluster number of unit, time group, summary table
 }
 \description{
 Estimator Function with Optional Cross-Fitting
