@@ -62,26 +62,26 @@
 #' ols <- est[["res"]]
 #' G <- est[["G"]]
 #' C <- est[["C"]]
-#' # 'summary_correct' contains the original estimates and standard error corrected by the heteroskedasticity autocorrelation consistent standard error
-#' summary_correct = est$summary_table
-#' coef_estimate = summary_correct$coefficients$Estimate
-#' std_error_original = summary_correct$coefficients$`Std. Error`
-#' std_error_corrected = summary_correct$coefficients$`Std. Error corrected`
+#' coeff <- ols$coefficients
+#' std_errors <- sqrt(vcovHC(ols, type = "HC0", method = "arellano"))
 #'
 #' # Cross-fitted estimate
 #' est_CF <- estimator_dc(formula, data, index, CF = TRUE, init = init)
 #' ols_CF <- est_CF[["res"]]
-#' summary_correct_CF = est_CF$summary_table
-#' coef_estimate_CF = summary_correct_CF$coefficients$Estimate
-#' std_error_original_CF = summary_correct_CF$coefficients$`Std. Error`
-#' std_error_corrected_CF = summary_correct_CF$coefficients$`Std. Error corrected`
+#' coeff_CF <- ols_CF$coefficients
+#' std_errors_CF <- sqrt(vcovHC(ols_CF, type = "HC0", method = "arellano")) * sqrt((N * T) / est_CF[["df"]])
 
 estimator_dc <- function(formula, data, index, CF = FALSE, init = 30) {
   if (!CF) {
     est_without_CF(formula, data, index, init)
-
   } else {
     est_with_CF(formula, data,index, init)
+  }
+}
+
+estimator_dc_dummy <- function(formula, data, index, CF = FALSE, init = 30) {
+  if (!CF) {
+    est_without_CF_dummy(formula, data, index, init)
   }
 }
 
@@ -153,7 +153,7 @@ split_indices <- function(dim, folds) {
 }
 
 # Estimator Without Cross-Fitting
-est_without_CF <- function(formula, data, index, init) {
+est_without_CF_dummy <- function(formula, data, index, init) {
   formula_vars <- all.vars(formula)
   dependent_var <- formula_vars[1]
   independent_vars <- formula_vars[-1]
@@ -185,36 +185,25 @@ est_without_CF <- function(formula, data, index, init) {
     Dv[, j] <- as.numeric(ktall$cluster == j)
   }
 
+  sig_dummy = matrix(0,N*T,N*C)
+  for (t in 1:T) {
+    sig_dummy[((t-1)*N+1):(t*N), ] = transform_vector(Dv[t,],N)
 
+  }
+  mu_dummy = matrix(0,N*T,T*G)
+  for (t in 1:T) {
+    mu_dummy[((t-1)*N+1):(t*N), ] = transform_matrix(Du,T,t)
 
-  Mu <- diag(N) - Du %*% solve(t(Du) %*% Du) %*% t(Du)
-  Mv <- diag(T) - Dv %*% solve(t(Dv) %*% Dv) %*% t(Dv)
+  }
 
-  tY <- c(Mu %*% Y %*% Mv)
-  tX_combined <- do.call(cbind, lapply(X_list, function(X) c(Mu %*% X %*% Mv)))
-  new_data <- data.frame(tY, tX_combined,  data[, "id"], data[, "time"])
-  colnames(new_data) <- c(formula_vars, "id", "time")
-  res = plm(formula, data = new_data, index = c("id", "time"), model = "pooling")
+  new_data <- data.frame(data$vY, data$vX, sig_dummy, mu_dummy,   data[, "id"], data[, "time"])
+  vec = colnames(new_data)[-1]
+  formula_str <- paste(colnames(new_data)[1], "~-1+", paste(vec[-((length(vec)-1):length(vec))], collapse = " + "))
 
-  coefs <- coef(res)
-  se_corrected <- sqrt(vcovHC(res, type = "HC0", method = "arellano")) * sqrt((N * T) / ((N-G)*(T-C)))
-  t_values_corrected <- coefs / se_corrected
-
-  # Calculate p-values from t-distribution for each coefficient
-  df <- res$df.residual  # degrees of freedom
-  p_values_corrected <- 2 * pt(-abs(t_values_corrected), df)
-
-  summary_table_correct <- data.frame(
-    Estimate = coefs,
-    SE_Corrected = se_corrected,
-    t_value_Corrected = t_values_corrected,
-    p_value_Corrected = p_values_corrected
-  )
-  colnames(summary_table_correct) = c('Estimate', 'Std. Error corrected', 't-value corrected', 'Pr(>|t|) corrected')
-  summary_table = summary(res)
-  summary_table$coefficients = cbind(summary_table_correct, summary_table$coefficients)
-
-  list(res = res, G = G, C = C, estimate_correct = summary_table_correct, summary_table = summary_table)
+  colnames(new_data)[length(colnames(new_data))-1] <- c( 'id')
+  colnames(new_data)[length(colnames(new_data))] <- c( 'time')
+  res_dummy = plm(formula_str, data = new_data, index = c("id", "time"),  model = "pooling")
+  list(res = res_dummy, G = G, C = C)
 }
 
 # Estimator with Cross-Fitting
@@ -299,28 +288,7 @@ est_with_CF <- function(formula, data, index, init, folds = 2) {
   new_data <- data.frame(tY, tX_combined, data[, "id"], data[, "time"])
   colnames(new_data) <- c(formula_vars, "id", "time")
 
-  res = plm(formula, data = new_data, index = c("id", "time"), model = "pooling")
-
-  coefs <- coef(res)
-  se_corrected <- sqrt(vcovHC(res, type = "HC0", method = "arellano")) * sqrt((N * T) / df)
-  t_values_corrected <- coefs / se_corrected
-
-  # Calculate p-values from t-distribution for each coefficient
-  df_res <- res$df.residual  # degrees of freedom
-  p_values_corrected <- 2 * pt(-abs(t_values_corrected), df_res)
-
-  summary_table_correct <- data.frame(
-    Estimate = coefs,
-    SE_Corrected = se_corrected,
-    t_value_Corrected = t_values_corrected,
-    p_value_Corrected = p_values_corrected
-  )
-  colnames(summary_table_correct) = c('Estimate', 'Std. Error corrected', 't-value corrected', 'Pr(>|t|) corrected')
-  summary_table = summary(res)
-  summary_table$coefficients = cbind(summary_table_correct, summary_table$coefficients)
-
-
-  list(res = res, df = df, estimate_correct = summary_table_correct, summary_table = summary_table)
+  list(res = plm(formula, data = new_data, index = c("id", "time"), model = "pooling"), df = df)
 }
 
 transform_vector <- function(vec, N) {
@@ -353,62 +321,4 @@ transform_matrix <- function(mat, T, t) {
   return(new_mat)
 }
 
-# est_without_CF_dummy <- function(formula, data, index, init) {
-#   formula_vars <- all.vars(formula)
-#   dependent_var <- formula_vars[1]
-#   independent_vars <- formula_vars[-1]
-#
-#   data <- recode_indices(data,index)
-#
-#   Y <- reshape_to_matrix(data, "id", "time", dependent_var)
-#   X_list <- lapply(independent_vars, function(var) reshape_to_matrix(data, "id", "time", var))
-#   X_combined <- do.call(cbind, X_list)
-#
-#   N <- nrow(Y)
-#   T <- ncol(Y)
-#
-#   clusteri <- cluster_general(Y, X_list, N, T, init, type = "long")
-#   G <- clusteri$clusters
-#   klong <- clusteri$res
-#
-#   clustert <- cluster_general(Y, X_list, N, T, init, type = "tall")
-#   C <- clustert$clusters
-#   ktall <- clustert$res
-#
-#   Du <- matrix(0, N, G)
-#   Dv <- matrix(0, T, C)
-#
-#   for (j in seq_len(G)) {
-#     Du[, j] <- as.numeric(klong$cluster == j)
-#   }
-#   for (j in seq_len(C)) {
-#     Dv[, j] <- as.numeric(ktall$cluster == j)
-#   }
-#
-#   sig_dummy = matrix(0,N*T,N*C)
-#   for (t in 1:T) {
-#     sig_dummy[((t-1)*N+1):(t*N), ] = transform_vector(Dv[t,],N)
-#
-#   }
-#   mu_dummy = matrix(0,N*T,T*G)
-#   for (t in 1:T) {
-#     mu_dummy[((t-1)*N+1):(t*N), ] = transform_matrix(Du,T,t)
-#
-#   }
-#
-#   new_data <- data.frame(data$vY, data$vX, sig_dummy, mu_dummy,   data[, "id"], data[, "time"])
-#   vec = colnames(new_data)[-1]
-#   formula_str <- paste(colnames(new_data)[1], "~-1+", paste(vec[-((length(vec)-1):length(vec))], collapse = " + "))
-#
-#   colnames(new_data)[length(colnames(new_data))-1] <- c( 'id')
-#   colnames(new_data)[length(colnames(new_data))] <- c( 'time')
-#   res_dummy = plm(formula_str, data = new_data, index = c("id", "time"),  model = "pooling")
-#   list(res = res_dummy, G = G, C = C)
-# }
-#
-# estimator_dc_dummy <- function(formula, data, index, CF = FALSE, init = 30) {
-#   if (!CF) {
-#     est_without_CF_dummy(formula, data, index, init)
-#   }
-# }
 
