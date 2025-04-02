@@ -1,4 +1,7 @@
 #' Estimator Function with Optional Cross-Fitting
+#'@title Inference after discretizing unobserved heterogeneity
+#'
+#' @description R package 'HDcluster' is dedicated to do inference for linear panel data model with unkown functions of fixed effects.
 #'
 #' @param formula regression formula
 #' @param data data which contains id, time, Y, X
@@ -6,7 +9,14 @@
 #' @param CF cross-fitting if true
 #' @param init initial iteration number of k-means
 #'
-#' @returns estimated results, cluster number of unit, time group, summary table
+#' @returns A list of fitted results is returned.
+#' Within this outputted list, the following elements can be found:
+#'     \item{res}{regression model.}
+#'     \item{G}{cluster number of unit group.}
+#'     \item{C}{cluster number of time group.}
+#'     \item{estimate_correct}{corrected standard error, t value, and p value.}
+#'     \item{summary_table}{summary of the model together with corrected estimates in the 'Coefficients'.}
+#'
 #' @export
 #'
 #' @examples set.seed(1)
@@ -53,15 +63,16 @@
 #' vX <- c(X)
 #'
 #' data <- data.frame(id_code, time_code, vY, vX)
-#'
 #' formula <- vY ~ vX - 1
 #' index = c("id_code", "time_code")
 #' init <- 300
+#'
 #' # Baseline estimate
 #' est <- estimator_dc(formula, data, index, init = init)
 #' ols <- est[["res"]]
 #' G <- est[["G"]]
 #' C <- est[["C"]]
+#'
 #' # 'summary_correct' contains the original estimates and standard error corrected by the heteroskedasticity autocorrelation consistent standard error
 #' summary_correct = est$summary_table
 #' coef_estimate = summary_correct$coefficients$Estimate
