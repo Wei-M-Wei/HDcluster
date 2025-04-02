@@ -51,7 +51,7 @@ coef_estimate = summary_correct$coefficients$Estimate
 std_error_original = summary_correct$coefficients$`Std. Error`
 std_error_corrected = summary_correct$coefficients$`Std. Error corrected`
 
-# We recommond having a look at the 'text.R' in the folder 'R'
+# We recommond having a look at the 'text_example.R' in the folder 'R'
 ```
 A CRAN release is coming soon.
 
