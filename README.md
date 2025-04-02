@@ -16,6 +16,9 @@ library(HDcluster)
 ## Features
 - **Main functionality**: Perform inference after discretizing unobserved heterogeneity in the panel data model, see the paper [^1].
 - **Validation example**: An example 'test.R' is included. 'estimator_dc(formula, data, index)' is the main function.
+- ```{r }
+  help(estimator_dc) # check an example provided
+  ```
 
 ## Additional resources
 - **Replication code**: The repository includes replication code for all simulations and empirical applications.
@@ -38,6 +41,19 @@ init <- 300
 
 # Baseline estimate, allows for cross-fitting
 est <- estimator_dc(formula, data, index, init = init)
+
+# We use the heteroskedasticity autocorrelation consistent standard errors clustered at the level of each unit
+ols <- est[["res"]]
+G <- est[["G"]]
+C <- est[["C"]]
+coeff <- ols$coefficients
+std_errors <- sqrt(vcovHC(ols, type = "HC0", method = "arellano")) * sqrt((N * T) / ((N-G)*(T-C)))
+
+# Comparison with Dummy variable described in page 7 of our paper
+est_dummy <- estimator_dc_dummy(formula, data, index, init = init)
+ols_dummy <- est_dummy[["res"]]
+coeff <- ols_dummy$coefficients
+std_errors_dummy <- sqrt(vcovHC(ols_dummy, type = "HC0", method = "arellano")) * sqrt((N * T) / ((N-G)*(T-C)))
 
 # We recommond having a look at the 'text.R' in the folder 'R'
 ```
