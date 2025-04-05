@@ -15,7 +15,7 @@ library(HDcluster)
 
 ## Features
 - **Main functionality**: Perform inference after discretizing unobserved heterogeneity in the panel data model, see the paper [^1].
-- **Validation example**: An example 'test.R' is included. 'estimator_dc(formula, data, index)' is the main function.
+- **Validation example**: An example 'test_example.R' is included. 'estimator_dc(formula, data, index)' is the main function.
 - ```{r }
   help(estimator_dc) # check an example provided
   ```
