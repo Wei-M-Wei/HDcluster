@@ -182,6 +182,10 @@ est_without_CF <- function(formula, data, index, init) {
   G <- clusteri$clusters
   klong <- clusteri$res
 
+  cluster_hie = cluster_Hierarchical(data = data.frame(y = Y, X_combined), cluster = 6)
+  C <- cluster_hie$G
+  ktall <- cluster_hie$res
+
   clustert <- cluster_general(Y, X_list, N, T, init, type = "tall")
   C <- clustert$clusters
   ktall <- clustert$res
@@ -422,4 +426,35 @@ transform_matrix <- function(mat, T, t) {
 #     est_without_CF_dummy(formula, data, index, init)
 #   }
 # }
+pseudo_dist <- function(x) {
+  N <- nrow(x)
+  T <- ncol(x)
 
+  as.dist(outer(1:N, 1:N, Vectorize(function(i, j) {
+    if (i == j) return(0)  # Distance to itself is 0
+
+    # Exclude i and j from k selection
+    possible_k <- setdiff(1:N, c(i, j))
+
+    max_k <- max(sapply(possible_k, function(k) {
+      mean(as.numeric(abs((x[i, ] - x[j, ]) * x[k, ])))  # Compute the given formula
+    }))
+
+    return(max_k)
+  })))
+}
+
+cluster_Hierarchical <- function( data, link = "average", threshold, cluster = NULL){
+  dist_matrix <- pseudo_dist(data)
+  hc <- hclust(dist_matrix, method = link)
+  if (is.na(cluster) == 1){
+  clusters <- cutree(hc, h = threshold)
+  G = length(unique(clusters))
+  res = clusters
+  }else{
+    clusters <- cutree(hc, k = cluster)
+    G = length(unique(clusters))
+    res = clusters
+  }
+  return(list(G = G, res = res))
+}
