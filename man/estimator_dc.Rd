@@ -27,7 +27,7 @@ Within this outputted list, the following elements can be found:
     \item{summary_table}{summary of the model together with corrected estimates in the 'Coefficients'.}
 }
 \description{
-R package 'HDcluster' is dedicated to do inference for linear panel data model with unkown functions of fixed effects.
+R package 'pcluster' is dedicated to do inference for linear panel data model with unkown functions of fixed effects.
 }
 \details{
 Estimator Function with Optional Cross-Fitting

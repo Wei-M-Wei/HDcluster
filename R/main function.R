@@ -1,7 +1,7 @@
 #' Estimator Function with Optional Cross-Fitting
 #'@title Inference after discretizing unobserved heterogeneity
 #'
-#' @description R package 'HDcluster' is dedicated to do inference for linear panel data model with unkown functions of fixed effects.
+#' @description R package 'pcluster' is dedicated to do inference for linear panel data model with unkown functions of fixed effects.
 #'
 #' @param formula regression formula
 #' @param data data which contains id, time, Y, X
@@ -17,6 +17,7 @@
 #'     \item{estimate_correct}{corrected standard error, t value, and p value.}
 #'     \item{summary_table}{summary of the model together with corrected estimates in the 'Coefficients'.}
 #'
+#' @import plm
 #' @export
 #'
 #' @examples set.seed(1)
@@ -222,9 +223,16 @@ est_without_CF <- function(formula, data, index, init) {
     t_value_Corrected = t_values_corrected,
     p_value_Corrected = p_values_corrected
   )
+
   colnames(summary_table_correct) = c('Estimate', 'Std. Error corrected', 't-value corrected', 'Pr(>|t|) corrected')
-  summary_table = summary(res)
-  summary_table$coefficients = cbind(summary_table_correct, summary_table$coefficients)
+
+  summary_table_correct$Signif <- sapply(summary_table_correct[["Pr(>|t|) corrected"]], get_stars)
+
+  summary_table <- list(
+    call = summary(res)$call,
+    coefficients = summary_table_correct
+  )
+  summary_table$significance_codes <- "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1"
 
   list(res = res, G = G, C = C, estimate_correct = summary_table_correct, summary_table = summary_table)
 }
@@ -327,9 +335,16 @@ est_with_CF <- function(formula, data, index, init, folds = 2) {
     t_value_Corrected = t_values_corrected,
     p_value_Corrected = p_values_corrected
   )
+
   colnames(summary_table_correct) = c('Estimate', 'Std. Error corrected', 't-value corrected', 'Pr(>|t|) corrected')
-  summary_table = summary(res)
-  summary_table$coefficients = cbind(summary_table_correct, summary_table$coefficients)
+
+  summary_table_correct$Signif <- sapply(summary_table_correct[["Pr(>|t|) corrected"]], get_stars)
+
+  summary_table <- list(
+    call = summary(res)$call,
+    coefficients = summary_table_correct
+  )
+  summary_table$significance_codes <- "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1"
 
 
   list(res = res, df = df, estimate_correct = summary_table_correct, summary_table = summary_table)
@@ -364,6 +379,15 @@ transform_matrix <- function(mat, T, t) {
 
   return(new_mat)
 }
+
+get_stars <- function(p) {
+  if (p < 0.001) return("***")
+  else if (p < 0.01) return("**")
+  else if (p < 0.05) return("*")
+  else if (p < 0.1) return(".")
+  else return(" ")
+}
+
 
 # est_without_CF_dummy <- function(formula, data, index, init) {
 #   formula_vars <- all.vars(formula)
