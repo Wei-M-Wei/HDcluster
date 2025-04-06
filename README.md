@@ -25,11 +25,12 @@ library(pcluster)
 - **Suggestions welcome**: Further improvements are planned, and we encourage feedback and suggestions to enhance the package.
 
 ## Corrected standard error
-For inference, we use  heteroskedasticity autocorrelation consistent standard errors clustered at the level of each unit with a degree of freedom correction:
+For inference, we use  heteroskedasticity autocorrelation consistent standard errors clustered at the level of each unit with a degree of freedom correction
 
 <p align="center">
   <img src="CodeCogsEqn.png" alt="Formula" />
 </p>
+
 where the corrected standard error refers to the estimator obtained without cross-fitting. For the estimator using cross-fitting, we recommend referring to the paper [^1].
 
 ## Example
