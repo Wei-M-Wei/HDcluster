@@ -1,16 +1,16 @@
-## HDcluster
+## pcluster
 
-This is the first version of the R package 'HDcluster'. 
+This is the first version of the R package 'pcluster'. 
 
 To install and use the package, we recommend installing the package by
 ```{r }
 install.packages("devtools")  # If not already installed
 library(devtools)
-install_github("Wei-M-Wei/HDcluster")
+install_github("Wei-M-Wei/pcluster")
 ```
 Once installed, load the package with
 ```{r }
-library(HDcluster)
+library(pcluster)
 ```
 
 ## Features
