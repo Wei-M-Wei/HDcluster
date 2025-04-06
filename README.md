@@ -24,6 +24,12 @@ library(pcluster)
 - **Replication code**: The repository includes replication code for all simulations and empirical applications.
 - **Suggestions welcome**: Further improvements are planned, and we encourage feedback and suggestions to enhance the package.
 
+## Corrected standard error
+For inference, we use  heteroskedasticity autocorrelation consistent standard errors clustered at the level of each unit with a degree of freedom correction:
+$$
+\operatorname{se}(\widehat{\beta}):=\sqrt{\frac{N T}{(N-G)(T-C)}}\left(\frac{1}{N T} \sum_{i=1}^N \sum_{t=1}^T \widehat{u}_{i t 1}^2\right)^{-1}\left(\frac{1}{N T} \sum_{i=1}^N\left(\sum_{t=1}^T\left(\widehat{e}_{i t}-\widehat{\beta}_{\hat{u}}^{i t 1}\right)_{i t 1}\right)^2\right)^{1 / 2}
+$$
+
 
 ## Example
 ```{r }
