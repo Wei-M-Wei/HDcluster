@@ -26,6 +26,7 @@ library(pcluster)
 
 ## Corrected standard error
 For inference, we use  heteroskedasticity autocorrelation consistent standard errors clustered at the level of each unit with a degree of freedom correction:
+
 ![Formula](CodeCogsEqn.png)
 
 
