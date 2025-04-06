@@ -30,7 +30,7 @@ For inference, we use  heteroskedasticity autocorrelation consistent standard er
 <p align="center">
   <img src="CodeCogsEqn.png" alt="Formula" />
 </p>
-where the corrected standard error refers to the estimator obtained without cross-fitting. For the estimator using cross-fitting, we recommend referring to the paper [^1] for further details.
+where the corrected standard error refers to the estimator obtained without cross-fitting. For the estimator using cross-fitting, we recommend referring to the paper [^1].
 
 ## Example
 ```{r }
