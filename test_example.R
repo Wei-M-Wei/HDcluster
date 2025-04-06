@@ -72,7 +72,7 @@ summary_correct = est$summary_table
 print(summary_correct)
 coef_estimate = summary_correct$coefficients$Estimate
 
-# 
+# We use the heteroskedasticity autocorrelation consistent standard errors clustered at the level of each unit together with correction for the degrees of freedom, see our paper page 20.
 std_error_corrected = summary_correct$coefficients$`Std. Error corrected`
 
 
