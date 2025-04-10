@@ -63,8 +63,8 @@ std_error = summary_correct$coefficients$`Std. Error corrected`
 
 > est$summary_table
 $call
-plm(formula = formula, data = new_data, model = "pooling", index = c("id", 
-    "time"))
+plm(formula = formula, data = data, model = "pooling", index = c("id_code", 
+    "time_code"))
 
 $coefficients
    Estimate Std. Error corrected t-value corrected Pr(>|t|) corrected Signif
